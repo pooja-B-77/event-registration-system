@@ -27,6 +27,29 @@ let currentOrganizerEvent = null;
 btnShowLogin.addEventListener("click", () => loginModal.classList.remove("hidden"));
 btnCloseLogin.addEventListener("click", () => loginModal.classList.add("hidden"));
 btnLogout.addEventListener("click", () => auth.signOut());
+// 📥 CSV Download Feature
+document.getElementById('downloadCsvBtn').addEventListener('click', async () => {
+  const snapshot = await db.collection('participants').get();
+  const data = snapshot.docs.map(doc => doc.data());
+
+  if (data.length === 0) {
+    alert("No participants found to download!");
+    return;
+  }
+
+  // Prepare CSV content
+  const headers = Object.keys(data[0]);
+  const rows = data.map(obj => headers.map(h => `"${(obj[h] || "").toString().replace(/"/g, '""')}"`));
+  const csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+
+  // Download as file
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "participants.csv";
+  link.click();
+});
+
 
 // Firebase Auth state listener
 auth.onAuthStateChanged(async (user) => {
