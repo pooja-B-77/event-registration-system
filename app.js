@@ -1,4 +1,6 @@
-// DOM Elements
+// -------------------------
+// DOM ELEMENTS
+// -------------------------
 const regForm = document.getElementById("reg-form");
 const nameInput = document.getElementById("name");
 const emailInput = document.getElementById("email");
@@ -20,62 +22,26 @@ const userInfo = document.getElementById("user-info");
 const userEmailSpan = document.getElementById("user-email");
 const btnLogout = document.getElementById("btn-logout");
 
+// Firebase global objects from window
+const db = window.db;
+const auth = window.auth;
+
 // Current logged-in organizer
 let currentOrganizerEvent = null;
 
-// --- Organizer Login ---
+// -------------------------
+// ORGANIZER LOGIN / LOGOUT
+// -------------------------
 btnShowLogin.addEventListener("click", () => loginModal.classList.remove("hidden"));
 btnCloseLogin.addEventListener("click", () => loginModal.classList.add("hidden"));
 btnLogout.addEventListener("click", () => auth.signOut());
-// 📥 CSV Download Feature
-document.getElementById('downloadCsvBtn').addEventListener('click', async () => {
-  const snapshot = await db.collection('participants').get();
-  const data = snapshot.docs.map(doc => doc.data());
 
-  if (data.length === 0) {
-    alert("No participants found to download!");
-    return;
-  }
-
-  // Prepare CSV content
-  const headers = Object.keys(data[0]);
-  const rows = data.map(obj => headers.map(h => `"${(obj[h] || "").toString().replace(/"/g, '""')}"`));
-  const csvContent = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
-
-  // Download as file
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = "participants.csv";
-  link.click();
-});
-
-
-// Firebase Auth state listener
-auth.onAuthStateChanged(async (user) => {
-  if (user) {
-    userInfo.classList.remove("hidden");
-    userEmailSpan.textContent = user.email;
-    btnShowLogin.classList.add("hidden");
-    
-    // Get organizer event
-    const orgDoc = await db.collection("organizers").doc(user.uid).get();
-    if (orgDoc.exists) {
-      currentOrganizerEvent = orgDoc.data().eventName;
-      setupRealtime(currentOrganizerEvent);
-    }
-  } else {
-    userInfo.classList.add("hidden");
-    btnShowLogin.classList.remove("hidden");
-    currentOrganizerEvent = null;
-    setupRealtime(); // Show all participants for public view
-  }
-});
-
-// Login button
+// -------------------------
+// ORGANIZER LOGIN ACTION
+// -------------------------
 btnLogin.addEventListener("click", async () => {
   try {
-    await auth.signInWithEmailAndPassword(loginEmail.value, loginPassword.value);
+    await signInWithEmailAndPassword(auth, loginEmail.value, loginPassword.value);
     loginModal.classList.add("hidden");
     loginEmail.value = "";
     loginPassword.value = "";
@@ -84,39 +50,86 @@ btnLogin.addEventListener("click", async () => {
   }
 });
 
-// --- Participant Registration ---
+// -------------------------
+// AUTH STATE CHANGE
+// -------------------------
+import {
+  collection,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  getDoc,
+  doc,
+  query,
+  orderBy,
+  where,
+  onSnapshot,
+  serverTimestamp,
+  getDocs,
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    userInfo.classList.remove("hidden");
+    userEmailSpan.textContent = user.email;
+    btnShowLogin.classList.add("hidden");
+
+    // Get organizer’s assigned event (if exists)
+    const orgRef = doc(db, "organizers", user.uid);
+    const orgSnap = await getDoc(orgRef);
+    if (orgSnap.exists()) {
+      currentOrganizerEvent = orgSnap.data().eventName;
+      setupRealtime(currentOrganizerEvent);
+    }
+  } else {
+    userInfo.classList.add("hidden");
+    btnShowLogin.classList.remove("hidden");
+    currentOrganizerEvent = null;
+    setupRealtime();
+  }
+});
+
+// -------------------------
+// REGISTER PARTICIPANT
+// -------------------------
 regForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const participant = {
-    name: nameInput.value,
-    email: emailInput.value,
-    phone: phoneInput.value,
-    event: eventInput.value,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-  };
+  try {
+    await addDoc(collection(db, "participants"), {
+      name: nameInput.value,
+      email: emailInput.value,
+      phone: phoneInput.value,
+      event: eventInput.value,
+      createdAt: serverTimestamp(),
+    });
 
-  await db.collection("participants").add(participant);
-  regForm.reset();
+    regForm.reset();
+  } catch (err) {
+    alert("Error adding participant: " + err.message);
+  }
 });
 
 // Reset form
 btnReset.addEventListener("click", () => regForm.reset());
 
-// --- Real-time Table ---
+// -------------------------
+// REAL-TIME PARTICIPANTS TABLE
+// -------------------------
 function setupRealtime(filterEventName = null) {
-  let query = db.collection("participants").orderBy("createdAt", "desc");
-  if (filterEventName) query = query.where("event", "==", filterEventName);
+  let q = query(collection(db, "participants"), orderBy("createdAt", "desc"));
+  if (filterEventName) q = query(collection(db, "participants"), where("event", "==", filterEventName));
 
-  query.onSnapshot((snapshot) => {
+  onSnapshot(q, (snapshot) => {
     tbody.innerHTML = "";
     const eventsSet = new Set();
 
-    snapshot.forEach((doc) => {
-      const data = doc.data();
+    snapshot.forEach((docSnap) => {
+      const data = docSnap.data();
       const tr = document.createElement("tr");
 
-      const createdAt = data.createdAt ? data.createdAt.toDate().toLocaleString() : "";
+      const createdAt = data.createdAt?.toDate?.().toLocaleString() || "";
 
       tr.innerHTML = `
         <td>${data.name}</td>
@@ -125,8 +138,8 @@ function setupRealtime(filterEventName = null) {
         <td>${data.event}</td>
         <td>${createdAt}</td>
         <td>
-          <button class="edit-btn" data-id="${doc.id}">Edit</button>
-          <button class="delete-btn" data-id="${doc.id}">Delete</button>
+          <button class="edit-btn" data-id="${docSnap.id}">Edit</button>
+          <button class="delete-btn" data-id="${docSnap.id}">Delete</button>
         </td>
       `;
 
@@ -147,31 +160,34 @@ function setupRealtime(filterEventName = null) {
   });
 }
 
-// --- Edit / Delete buttons ---
+// -------------------------
+// EDIT / DELETE PARTICIPANTS
+// -------------------------
 function setupTableActions() {
   document.querySelectorAll(".edit-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
       const docId = btn.dataset.id;
-      const docRef = db.collection("participants").doc(docId);
-      const docSnap = await docRef.get();
-      if (docSnap.exists) {
-        const data = docSnap.data();
+      const ref = doc(db, "participants", docId);
+      const snap = await getDoc(ref);
+
+      if (snap.exists()) {
+        const data = snap.data();
         nameInput.value = data.name;
         emailInput.value = data.email;
         phoneInput.value = data.phone || "";
         eventInput.value = data.event;
 
-        btnSubmit = document.getElementById("btn-submit");
-        btnSubmit.textContent = "Update";
-        btnSubmit.onclick = async (e) => {
+        const submitBtn = document.getElementById("btn-submit");
+        submitBtn.textContent = "Update";
+        submitBtn.onclick = async (e) => {
           e.preventDefault();
-          await docRef.update({
+          await updateDoc(ref, {
             name: nameInput.value,
             email: emailInput.value,
             phone: phoneInput.value,
             event: eventInput.value,
           });
-          btnSubmit.textContent = "Register";
+          submitBtn.textContent = "Register";
           regForm.reset();
         };
       }
@@ -180,14 +196,16 @@ function setupTableActions() {
 
   document.querySelectorAll(".delete-btn").forEach((btn) => {
     btn.addEventListener("click", async () => {
-      if (confirm("Are you sure to delete this participant?")) {
-        await db.collection("participants").doc(btn.dataset.id).delete();
+      if (confirm("Are you sure you want to delete this participant?")) {
+        await deleteDoc(doc(db, "participants", btn.dataset.id));
       }
     });
   });
 }
 
-// --- Search and Filter ---
+// -------------------------
+// SEARCH + FILTER
+// -------------------------
 searchInput.addEventListener("input", () => {
   const term = searchInput.value.toLowerCase();
   tbody.querySelectorAll("tr").forEach((tr) => {
@@ -202,5 +220,28 @@ filterEvent.addEventListener("change", () => {
   setupRealtime(selected || currentOrganizerEvent);
 });
 
-// --- Initialize table on page load ---
+// -------------------------
+// CSV DOWNLOAD FEATURE
+// -------------------------
+document.getElementById("downloadCsvBtn")?.addEventListener("click", async () => {
+  const snapshot = await getDocs(collection(db, "participants"));
+  const data = snapshot.docs.map((doc) => doc.data());
+
+  if (data.length === 0) {
+    alert("No participants found to download!");
+    return;
+  }
+
+  const headers = Object.keys(data[0]);
+  const rows = data.map((obj) => headers.map((h) => `"${(obj[h] || "").toString().replace(/"/g, '""')}"`));
+  const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "participants.csv";
+  link.click();
+});
+
+// Initialize on load
 setupRealtime();

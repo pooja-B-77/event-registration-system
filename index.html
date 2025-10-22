@@ -4,13 +4,38 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Event Registration System</title>
+
   <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="styles.css" />
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src("https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-  <script src("https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+  <!-- ✅ Modern Firebase SDKs (Modular, Production Ready) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+
+    // 🔥 Your Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyC0dhdGJrhMLafkTYQQ8KhLrcDTk-4_jNI",
+      authDomain: "event-registration-syste-12de6.firebaseapp.com",
+      projectId: "event-registration-syste-12de6",
+      storageBucket: "event-registration-syste-12de6.firebasestorage.app",
+      messagingSenderId: "319823010929",
+      appId: "1:319823010929:web:412fc881c169663bd94fd0",
+      measurementId: "G-JGYF98W2M6"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // Make them accessible to app.js
+    window.db = db;
+    window.auth = auth;
+  </script>
 </head>
 
 <body>
@@ -25,7 +50,10 @@
     <header class="dashboard-header">
       <h2>Event Registration Dashboard</h2>
       <div class="auth-area">
-        <div id="user-info" class="hidden">Logged in as <span id="user-email"></span> <button id="btn-logout">Logout</button></div>
+        <div id="user-info" class="hidden">
+          Logged in as <span id="user-email"></span>
+          <button id="btn-logout">Logout</button>
+        </div>
         <button id="btn-show-login">Organizer Login</button>
       </div>
     </header>
@@ -80,7 +108,7 @@
     </main>
   </div>
 
-  <!-- Login Modal -->
+  <!-- Organizer Login Modal -->
   <div id="login-modal" class="modal hidden">
     <div class="modal-content">
       <h3>Organizer Login</h3>
@@ -93,45 +121,31 @@
     </div>
   </div>
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyC0dhdGJrhMLafkTYQQ8KhLrcDTk-4_jNI",
-      authDomain: "event-registration-syste-12de6.firebaseapp.com",
-      projectId: "event-registration-syste-12de6",
-      storageBucket: "event-registration-syste-12de6.firebasestorage.app",
-      messagingSenderId: "319823010929",
-      appId: "1:319823010929:web:412fc881c169663bd94fd0",
-      measurementId: "G-JGYF98W2M6"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const auth = firebase.auth();
-  </script>
+  <!-- Load app logic -->
   <script src="app.js"></script>
+
   <!-- 🌗 Dark Mode Toggle -->
-<button id="theme-toggle" title="Toggle Theme">🌙</button>
+  <button id="theme-toggle" title="Toggle Theme">🌙</button>
 
-<script>
-  // Dark Mode Toggle Script
-  const toggleBtn = document.getElementById('theme-toggle');
-  toggleBtn.addEventListener('click', () => {
-    document.body.classList.toggle('dark');
-    const currentTheme = document.body.classList.contains('dark') ? 'dark' : 'light';
-    localStorage.setItem('theme', currentTheme);
-    toggleBtn.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
-  });
+  <script>
+    // 🌙 Dark Mode Toggle Script
+    const toggleBtn = document.getElementById('theme-toggle');
+    toggleBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      const theme = document.body.classList.contains('dark') ? 'dark' : 'light';
+      localStorage.setItem('theme', theme);
+      toggleBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+    });
 
-  // Load saved theme
-  window.addEventListener('load', () => {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-      document.body.classList.add('dark');
-      toggleBtn.textContent = '☀️';
-    }
-  });
-</script>
-
+    // Load saved theme
+    window.addEventListener('load', () => {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark') {
+        document.body.classList.add('dark');
+        toggleBtn.textContent = '☀️';
+      }
+    });
+  </script>
 </body>
 </html>
 
