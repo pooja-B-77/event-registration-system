@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Event Registration System</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <header class="hero">
+    <div class="hero-content">
+      <h1>Join. Register. Engage.</h1>
+      <p>Effortless event registration & participant management in real-time.</p>
+    </div>
+  </header>
+
+  <div class="container">
+    <header class="dashboard-header">
+      <h2>Event Registration Dashboard</h2>
+      <div class="auth-area">
+        <div id="user-info" class="hidden">
+          Logged in as <span id="user-email"></span>
+          <button id="btn-logout">Logout</button>
+        </div>
+        <button id="btn-show-login">Organizer Login</button>
+      </div>
+    </header>
+
+    <main>
+      <!-- Registration Form -->
+      <section class="form-section">
+        <h3>Register for an Event</h3>
+        <form id="reg-form">
+          <div class="row">
+            <label>Name <input id="name" required /></label>
+            <label>Email <input id="email" type="email" required /></label>
+          </div>
+          <div class="row">
+            <label>Phone <input id="phone" /></label>
+            <label>Event <input id="event" required placeholder="Eg: Web Dev Workshop"/></label>
+          </div>
+          <div class="row actions">
+            <button id="btn-submit" type="submit">Register</button>
+            <button id="btn-reset" type="button">Reset</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Search & Filter -->
+      <section class="controls">
+        <input id="search" placeholder="Search by name or event…" />
+        <select id="filter-event">
+          <option value="">All events</option>
+        </select>
+      </section>
+
+      <!-- Participants Table -->
+      <section class="table-section">
+        <h3>Participants</h3>
+        <div id="table-wrap">
+          <table id="participants-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Event</th>
+                <th>Registered At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Organizer Login Modal -->
+  <div id="login-modal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Organizer Login</h3>
+      <input id="login-email" placeholder="Email" />
+      <input id="login-password" placeholder="Password" type="password" />
+      <div class="row actions">
+        <button id="btn-login">Login</button>
+        <button id="btn-close-login">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load app logic (MODULE!) -->
+  <script type="module" src="./app.js"></script>
+
+  <!-- 🌗 Dark Mode Toggle -->
+  <button id="theme-toggle" title="Toggle Theme">🌙</button>
+
+  <script>
+    // 🌙 Dark Mode Toggle Script
+    const toggleBtn = document.getElementById('theme-toggle');
+    toggleBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+      const theme = document.body.classList.contains('dark') ? 'dark' : 'light';
+      localStorage.setItem('theme', theme);
+      toggleBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+    });
+
+    // Load saved theme
+    window.addEventListener('load', () => {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'dark') {
+        document.body.classList.add('dark');
+        toggleBtn.textContent = '☀️';
+      }
+    });
+  </script>
+</body>
+</html>
