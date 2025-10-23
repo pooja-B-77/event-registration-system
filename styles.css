@@ -17,7 +17,11 @@ body {
 }
 
 .hero {
+<<<<<<< HEAD
  background-image: url("hero-event.jpg");
+=======
+  background: url('hero-event.jpg') center/cover no-repeat;
+>>>>>>> 4abf62d4d0beb1801624dae3dd7debc07dc34e8d
   padding: 80px 20px;
   text-align: center;
   color: #fff;

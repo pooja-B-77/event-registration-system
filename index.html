@@ -9,6 +9,36 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="styles.css" />
+<<<<<<< HEAD
+=======
+
+  <!-- ✅ Modern Firebase SDKs (Modular, Production Ready) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+
+    // 🔥 Your Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyC0dhdGJrhMLafkTYQQ8KhLrcDTk-4_jNI",
+      authDomain: "event-registration-syste-12de6.firebaseapp.com",
+      projectId: "event-registration-syste-12de6",
+      storageBucket: "event-registration-syste-12de6.firebasestorage.app",
+      messagingSenderId: "319823010929",
+      appId: "1:319823010929:web:412fc881c169663bd94fd0",
+      measurementId: "G-JGYF98W2M6"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // Make them accessible to app.js
+    window.db = db;
+    window.auth = auth;
+  </script>
+>>>>>>> 4abf62d4d0beb1801624dae3dd7debc07dc34e8d
 </head>
 
 <body>
@@ -94,8 +124,13 @@
     </div>
   </div>
 
+<<<<<<< HEAD
   <!-- Load app logic (MODULE!) -->
   <script type="module" src="./app.js"></script>
+=======
+  <!-- Load app logic -->
+  <script src="app.js"></script>
+>>>>>>> 4abf62d4d0beb1801624dae3dd7debc07dc34e8d
 
   <!-- 🌗 Dark Mode Toggle -->
   <button id="theme-toggle" title="Toggle Theme">🌙</button>
@@ -121,3 +156,7 @@
   </script>
 </body>
 </html>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4abf62d4d0beb1801624dae3dd7debc07dc34e8d
