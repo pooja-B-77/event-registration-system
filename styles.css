@@ -1,14 +1,17 @@
-/* Professional Event Registration System Styling */
+/* ============================================================
+   🌟 Professional Event Registration System Styling
+   ============================================================ */
 
 :root {
   --primary: #0056b3;
   --accent: #20c997;
   --bg-gradient: linear-gradient(135deg, #e3f2fd, #ffffff);
-  --shadow-card: rgba(0,0,0,0.1);
+  --shadow-card: rgba(0, 0, 0, 0.1);
   --radius: 12px;
   --font: 'Poppins', sans-serif;
 }
 
+/* Base Styles */
 body {
   margin: 0;
   font-family: var(--font);
@@ -16,12 +19,11 @@ body {
   color: #333;
 }
 
+/* =============================
+   🦋 Hero Section
+   ============================= */
 .hero {
-<<<<<<< HEAD
- background-image: url("hero-event.jpg");
-=======
   background: url('hero-event.jpg') center/cover no-repeat;
->>>>>>> 4abf62d4d0beb1801624dae3dd7debc07dc34e8d
   padding: 80px 20px;
   text-align: center;
   color: #fff;
@@ -31,7 +33,7 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0, 0, 0, 0.4);
 }
 .hero-content {
   position: relative;
@@ -47,6 +49,9 @@ body {
   font-size: 1.2rem;
 }
 
+/* =============================
+   🧩 Container and Layout
+   ============================= */
 .container {
   max-width: 1000px;
   margin: -60px auto 60px;
@@ -56,6 +61,7 @@ body {
   padding: 40px 30px;
 }
 
+/* Header and Auth */
 .dashboard-header {
   display: flex;
   justify-content: space-between;
@@ -79,7 +85,11 @@ body {
   background: #17a589;
 }
 
-.form-section, .table-section {
+/* =============================
+   📝 Forms and Inputs
+   ============================= */
+.form-section,
+.table-section {
   margin-bottom: 40px;
 }
 .form-section {
@@ -104,18 +114,22 @@ label {
   font-size: 0.95rem;
   margin-bottom: 15px;
 }
-input, select {
+input,
+select {
   padding: 12px;
   font-size: 0.95rem;
   border: 1px solid #ddd;
   border-radius: var(--radius);
   margin-top: 6px;
 }
-input:focus, select:focus {
+input:focus,
+select:focus {
   border-color: var(--accent);
   outline: none;
-  box-shadow: 0 0 4px rgba(32,201,151,0.4);
+  box-shadow: 0 0 4px rgba(32, 201, 151, 0.4);
 }
+
+/* Buttons */
 .actions {
   display: flex;
   justify-content: flex-end;
@@ -135,19 +149,26 @@ button:hover {
   background: #004494;
 }
 
+/* =============================
+   🔍 Search & Filters
+   ============================= */
 .controls {
   display: flex;
   justify-content: space-between;
   gap: 20px;
   margin-bottom: 30px;
 }
-.controls input, .controls select {
+.controls input,
+.controls select {
   padding: 12px;
   font-size: 0.95rem;
   border: 1px solid #ddd;
   border-radius: var(--radius);
 }
 
+/* =============================
+   📋 Table Styles
+   ============================= */
 .table-section {
   overflow-x: auto;
 }
@@ -159,7 +180,8 @@ thead {
   background: var(--accent);
   color: #fff;
 }
-th, td {
+th,
+td {
   padding: 14px 12px;
   font-size: 0.9rem;
   text-align: left;
@@ -168,7 +190,8 @@ th, td {
 tr:hover {
   background: #f8f9fa;
 }
-.edit-btn, .delete-btn {
+.edit-btn,
+.delete-btn {
   padding: 6px 8px;
   font-size: 0.85rem;
   color: #fff;
@@ -189,11 +212,13 @@ tr:hover {
   background: #c82333;
 }
 
-/* Modal */
+/* =============================
+   🔒 Modal Styles
+   ============================= */
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -212,18 +237,30 @@ tr:hover {
   width: 100%;
   margin-bottom: 15px;
 }
-.hidden { display: none; }
-
-@media(max-width: 768px) {
-  .dashboard-header, .controls { flex-direction: column; gap: 15px; }
-  .row { flex-direction: column; }
-  label { width: 100%; }
+.hidden {
+  display: none;
 }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-header,
+  .controls {
+    flex-direction: column;
+    gap: 15px;
+  }
+  .row {
+    flex-direction: column;
+  }
+  label {
+    width: 100%;
+  }
+}
+
 /* =============================
    🌗 Dark Mode + Animations
    ============================= */
 
-/* Default Light Mode Variables */
+/* Light Mode */
 :root {
   --primary: #007bff;
   --accent: #00b894;
@@ -233,7 +270,7 @@ tr:hover {
   --shadow-card: rgba(0, 0, 0, 0.1);
 }
 
-/* Dark Mode Variables */
+/* Dark Mode */
 body.dark {
   --bg: #121212;
   --card-bg: #1e1e1e;
@@ -241,20 +278,19 @@ body.dark {
   --shadow-card: rgba(255, 255, 255, 0.05);
 }
 
-/* Apply Global Theme */
+/* Global Theme */
 body {
   background: var(--bg);
   color: var(--text-color);
   transition: background 0.5s ease, color 0.5s ease;
 }
 
-/* Smooth Fade In */
+/* Fade-In Animation */
 .fade-in {
   opacity: 0;
   transform: translateY(20px);
   animation: fadeInUp 0.8s ease forwards;
 }
-
 @keyframes fadeInUp {
   to {
     opacity: 1;
@@ -263,11 +299,13 @@ body {
 }
 
 /* Glowing Button Hover */
-button, .btn-primary {
+button,
+.btn-primary {
   box-shadow: 0 0 0px transparent;
   transition: 0.3s ease;
 }
-button:hover, .btn-primary:hover {
+button:hover,
+.btn-primary:hover {
   box-shadow: 0 0 15px rgba(0, 184, 148, 0.6);
 }
 
